@@ -1,6 +1,10 @@
 const formEl = document.querySelector("#task-form");
-const tasksToDoEl = document.querySelector("#tasks-to-do");
 const pageContentEl = document.querySelector("#page-content");
+
+const tasksToDoEl = document.querySelector("#tasks-to-do");
+const tasksInProgressEl = document.querySelector("#tasks-in-progress");
+const tasksCompletedEl = document.querySelector("#tasks-completed");
+
 let taskIdCounter = 0;
 
 const taskFormHandler = event => {
@@ -16,12 +20,34 @@ const taskFormHandler = event => {
 
     formEl.reset();
 
-    const taskDataObj = {
-        name: taskNameInput,
-        type: taskTypeInput
-    };
+    const isEdit = formEl.hasAttribute("data-task-id");
+    
+    // Has data attribute, so get task id and call function to complete edit process
+    if (isEdit) {
+        const taskId = formEl.getAttribute("data-task-id");
+        completeEditTask(taskNameInput, taskTypeInput, taskId);
+    } else {
+        const taskDataObj = {
+            name: taskNameInput,
+            type: taskTypeInput
+        };
+        
+        createTaskEl(taskDataObj);
+    }
+};
 
-    createTaskEl(taskDataObj);
+const completeEditTask = (taskName, taskType, taskId) => {
+
+    const taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+
+    // set new values
+    taskSelected.querySelector("h3.task-name").textContent = taskName;
+    taskSelected.querySelector("span.task-type").textContent = taskType;
+
+    alert("Task Updated!");
+    // Clean up the edit appearance
+    formEl.removeAttribute("data-task-id");
+    document.querySelector("#save-task").textContent = "Add Task";
 };
 
 const createTaskEl = taskDataObj => {
@@ -69,7 +95,7 @@ const createTaskActions = taskId => {
     statusSelectEl.setAttribute("name", "status-change");
     statusSelectEl.setAttribute("data-task-id", taskId);
 
-    const statusChoices = ["To Do", "In Progerss", "Completed"];
+    const statusChoices = ["To Do", "In Progress", "Completed"];
 
     for (let i = 0; i < statusChoices.length; i++) {
         // Create option element
@@ -100,6 +126,23 @@ const taskButtonHandler = event => {
     }
 };
 
+const taskStatusChangeHandler = event => {
+    // Get the task item's id
+    const taskId = event.target.getAttribute("data-task-id");
+    // Get the currently selected option's value and convert to lowercase
+    const statusValue = event.target.value.toLowerCase();
+    // Find the parent task item element based on the id
+    const taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+    // Put the selected task in the right spot for its new option
+    if (statusValue === "to do") {
+        tasksToDoEl.appendChild(taskSelected);
+    } else if (statusValue === "in progress") {
+        tasksInProgressEl.appendChild(taskSelected);
+    } else if (statusValue === "completed") {
+        tasksCompletedEl.appendChild(taskSelected);
+    }
+};
+
 const editTask = taskId => {
 
     const taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
@@ -124,3 +167,5 @@ const deleteTask = taskId => {
 formEl.addEventListener("submit", taskFormHandler);
 
 pageContentEl.addEventListener("click", taskButtonHandler);
+
+pageContentEl.addEventListener("change", taskStatusChangeHandler);
