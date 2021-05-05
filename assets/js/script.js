@@ -1,4 +1,4 @@
-var formE1 = document.querySelector("#task-form");
+var formEl = document.querySelector("#task-form");
 var tasksToDoEl = document.querySelector("#tasks-to-do");
 
 var taskFormHandler = function(event) {
@@ -6,6 +6,13 @@ var taskFormHandler = function(event) {
 
     var taskNameInput = document.querySelector("input[name='task-name']").value;
     var taskTypeInput = document.querySelector("select[name='task-type']").value;
+
+    if (!taskNameInput || !taskTypeInput) {
+        alert("You need to fill out the task form!");
+        return false;
+    }
+
+    formEl.reset();
 
     var taskDataObj = {
         name: taskNameInput,
@@ -27,4 +34,4 @@ const createTaskEl = (taskDataObj) => {
     tasksToDoEl.appendChild(listItemEl);
 };
 
-formE1.addEventListener("submit", taskFormHandler);
+formEl.addEventListener("submit", taskFormHandler);
