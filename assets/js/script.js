@@ -54,6 +54,7 @@ const completeEditTask = (taskName, taskType, taskId) => {
             tasks[i].type = taskType;
         }
     };
+    saveTasks();
 
     alert("Task Updated!");
     // Clean up the edit appearance
@@ -74,6 +75,7 @@ const createTaskEl = taskDataObj => {
     // Save the id to the task object array
     taskDataObj.id = taskIdCounter;
     tasks.push(taskDataObj);
+    saveTasks();
 
     const taskActionsEl = createTaskActions(taskIdCounter);
     listItemEl.appendChild(taskActionsEl);
@@ -155,6 +157,7 @@ const taskStatusChangeHandler = event => {
     } else if (statusValue === "completed") {
         tasksCompletedEl.appendChild(taskSelected);
     }
+    saveTasks();
 };
 
 const editTask = taskId => {
@@ -189,6 +192,12 @@ const deleteTask = taskId => {
 
     // reassign tasks array to be the same as the updated tasks array
     tasks = updatedTaskArr;
+
+    saveTasks();
+};
+
+const saveTasks = () => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
 formEl.addEventListener("submit", taskFormHandler);
