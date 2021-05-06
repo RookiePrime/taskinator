@@ -157,6 +157,13 @@ const taskStatusChangeHandler = event => {
     } else if (statusValue === "completed") {
         tasksCompletedEl.appendChild(taskSelected);
     }
+    // Update status in the save data
+    for (let i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === parseInt(taskId)) {
+            tasks[i].status = statusValue;
+        }
+    };
+
     saveTasks();
 };
 
@@ -199,6 +206,21 @@ const deleteTask = taskId => {
 const saveTasks = () => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
 };
+
+const loadTasks = () => {
+    savedTasks = localStorage.getItem("tasks");
+
+    if (!savedTasks) return false;
+
+    savedTasks = JSON.parse(savedTasks);
+
+    for (let i = 0; i < savedTasks.length; i++) {
+        // Pass each task object into the existing function for making tasks
+        createTaskEl(savedTasks[i]);
+    }
+};
+
+loadTasks();
 
 formEl.addEventListener("submit", taskFormHandler);
 
